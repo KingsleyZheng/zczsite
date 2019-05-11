@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}
+登录
+{% endblock title %}
+
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+    <h3>登录</h3>
+
+    {% if form.errors %}
+        <p>您输入的用户名或密码有误，请重试。</p>
+    {% endif %}
+
+    <p>请输入用户名和密码。</p>
+    {% if next %}
+    <form class="form-horizontal" action="{% url 'account:user_login' %}?next={{next}}" method="POST">
+    {% else %}
+    <form class="form-horizontal" action="{% url 'account:user_login' %}" method="POST">
+    {% endif %}
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}" class="col-md-5 control-label" style="color:red">
+                <span class="glyphicon glyphicon-user"></span>Username
+            </label>
+            <div class="col-md-6 text-left">{{ form.username }}</div>
+        </div>
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}" class="col-md-5 control-label" style="color:blue">
+                <span class="glyphicon glyphicon-floppy-open"></span>Password
+            </label>
+            <div class="col-md-6 text-left">{{ form.password }}</div>
+        </div>
+        <input type="submit" class="btn btn-primary btn-lg" value="Login">
+    </form>
+    <p>忘记了密码？请<a href="{% url 'account:password_reset' %}">点此</a>重置。</p>
+</div>
+{% endblock content %}

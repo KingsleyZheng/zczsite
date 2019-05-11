@@ -1,0 +1,133 @@
+{% extends "article/base.html" %}
+
+{% load staticfiles %}
+
+{% load thumbnail %}
+
+{% block title %}
+图片列表
+{% endblock title %}
+
+{% block content %}
+<div>
+    <button type="button" class="btn btn-primary btn-block" onclick="addImage()">添加图片</button>
+    <div style="margin-top:10px">
+    <table class="table table-hover">
+        <tr>
+            <td>序号</td>
+            <td>标题</td>
+            <td>图片</td>
+            <td>操作</td>
+        </tr>
+        {% for image in images %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{image.title}}</td>
+            {% thumbnail image.image "100x100" crop="center" as im %}
+            <td><img src="{{im.url}}" width="{{im.width}}"/></td>
+            {% endthumbnail %}
+            <td><a name="delete" href="javascript:" onclick="del_image(this, {{image.id}})"><span class="glyphicon glyphicon-trash" style="margin-left:20px;"></span></a></td>
+        </tr>
+        {% empty %}
+        <p>尚未添加图片。</p>
+        {% endfor %}
+    </table>
+    </div> 
+</div>
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/layer.js' %}"></script>
+<script>
+//添加图片
+function addImage(){
+    var index=layer.open({
+        type: 1,
+        skin: 'layui-layer-demo',
+        closoBtn: 0,
+        shift: 2,
+        shadeClose: true,
+        title: "Add Image",
+        area: ['600px', '440px'],
+        content: '<div style="padding:20px"><p>请添加文件扩展名为.jpg或.png的网上图片地址</p><form><div class="form-group"><label for="phototitle" class="col-sm-2 control-label">标题</label><div class="col-sm-10"><input id="phototitle" type="text" class="form-control" style="margin-bottom:5px"></div></div><div class="form-group"><label for="photourl" class="col-sm-2 control-label">图片地址</label><div class="col-sm-10"><input id="photourl" type="text" class="form-control" style="margin-bottom:5px"></div></div><div class="form-group"><label for="description" class="col-sm-2 control-label">描述</label><div class="col-sm-10"><textarea rows="2" id="photodescription" class="form-control" style="margin-bottom:5px"></textarea></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><input id="newphoto" type="button" class="btn btn-default" value="添加图片"></div></div></form></div>',
+        success: function(){
+            $("#newphoto").on('click',function(){
+                var title = $("#phototitle").val();
+                var url = $("#photourl").val();
+                var description = $("photodescription").val();
+                var photo = {"title":title, "url":url, "description":description};
+                $.ajax({
+                    url: '{% url "image:upload_image" %}',
+                    type: "POST",
+                    data: photo, 
+                    success: function(e){
+                        var status = e['status']
+                        if (status =="1"){
+                            layer.close(index);
+                            window.location.reload();
+                        } else{
+                            layer.msg('图片无法获取，请更换图片');
+                        }
+                    },
+                });
+            });
+        }, 
+    });
+}
+//删除图片
+function del_image(the, image_id){
+    var image_title = $(the).parents("tr").children("td").eq(1).text();
+    layer.open({
+        type: 1,
+        skin: 'layui-layer-rim',
+        area: ['400px', '200px'],
+        title: '删除图片',
+        content: '<div class="text-center" style="margin-top:20px"><p>请问是否确认删除'+image_title+'？</p></div>',
+        btn:['确定','取消'],
+        yes: function(){
+            $.ajax({
+                url:'{% url "image:del_image" %}',
+                type: 'POST',
+                data: {"image_id":image_id},
+                success: function (e) {
+                    var status = e['status']
+                    if (status =="1"){
+                        parent.location.reload();
+                        layer.msg("图片删除成功");
+                    } else{
+                        layer.msg('图片删除成失败');
+                    }
+                },
+            });
+        },
+    });
+}
+</script>
+{% endblock content %}
+<!-- <div style="padding:20px">
+    <p>请添加文件扩展名为.jpg或.png的网上图片地址</p>
+    <form>
+        <div class="form-group">
+            <label for="phototitle" class="col-sm-2 control-label">标题</label>
+            <div class="col-sm-10"><input id="phototitle" type="text" class="form-control" style="margin-bottom:5px"></div>
+        </div>
+        <div class="form-group">
+            <label for="photourl" class="col-sm-2 control-label">图片地址</label>
+            <div class="col-sm-10"><input id="photourl" type="text" class="form-control" style="margin-bottom:5px"></div>
+        </div>
+        <div class="form-group">
+            <label for="description" class="col-sm-2 control-label">描述</label>
+            <div class="col-sm-10"><textarea rows="2" id="photodescription" class="form-control" style="margin-bottom:5px"></textarea></div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10"><input id="newphoto" type="button" class="btn btn-default" value="添加图片"></div>
+        </div>
+    </form>
+</div> -->
+success: function(e){
+    var status = e['status']
+    if (status =="1"){
+        layer.close(index);
+        window.location.reload();
+    } else{
+        layer.msg('图片无法获取，请更换图片')
+    }
+}

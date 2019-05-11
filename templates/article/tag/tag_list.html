@@ -1,0 +1,96 @@
+{% extends "article/base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}
+文章标签
+{% endblock title %}
+
+{% block content %}
+<div>
+    <p>添加文章标签</p>
+    <form action="." method="POST" class="form-horizontal" role="form">
+        {% csrf_token %}
+        <div class="form-group" style="margin-top:10px">
+            <div class="col-md-2 text-right"><span>文章标签</span></div>
+            <div class="col-md-10 text-left">{{article_tag_form.tag}}</div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2">
+                <input type="button" class="btn btn-primary" style="margin-left:200px;margin-top:10px;" value="添加标签" onclick="add_tag()">
+            </div>
+        </div>
+    </form>
+</div>
+<div>
+    <p>已有标签列表</p>
+    <table class="table table-hover">
+        <tr>
+            <td>序号</td>
+            <td>文章标签</td>
+            <td>操作</td>
+        </tr>
+        {% for article_tag in article_tags %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{article_tag.tag}}</td>
+            <td>
+                <a name="delete" href="javascript:" onclick="del_tag(this, {{article_tag.id}})">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <p>还没有设置文章标签，请添加。</p>
+        {% endfor %}
+    </table>
+</div>
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/layer.js' %}"></script>
+<script>
+//增加标签
+function add_tag(){
+    tag = $('#id_tag').val();
+    $.ajax({
+        url: '{% url "article:article_tag" %}',
+        type: "POST",
+        data: {"tag":tag},
+        success: function(e){
+            if(e == "1"){
+                layer.msg("添加标签成功");
+                window.location.reload();
+            }else{
+                layer.msg(e)
+            }
+        }
+    });
+}
+//删除标签
+function del_tag(the, tag_id){
+    var article_tag = $(the).parents("tr").children("td").eq(1).text();
+    layer.open({
+        type: 1,
+        skin:"layui-layer-rim",
+        area: ["400px","200px"],
+        title: "删除文章标签",
+        content: '<div class="text-center" style="margin-top:20px"><p>请问是否确认删除'+article_tag+'？</p></div>',
+        btn:['确定','取消'],
+        yes: function(){
+            $.ajax({
+                url:'{% url "article:del_article_tag" %}',
+                type: 'POST',
+                data: {"tag_id":tag_id},
+                success: function (e) {
+                    if (e == "1") {
+                        parent.location.reload();
+                        layer.msg("标签删除成功");
+                    } else {
+                        layer.msg("删除失败");
+                    }
+                },
+            });
+        },
+    });
+}
+</script>
+{% endblock content %}

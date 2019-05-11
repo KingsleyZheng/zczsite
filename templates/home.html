@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}
+权力的游戏资讯站
+{% endblock title %}
+
+{% block content %}
+<div class="text-center">
+    <h1>权力的游戏资讯站</h1>
+    <h3>Winter is already here.</h3>
+    {% load staticfiles %}
+    <img src="{% static 'images/logo.jpg' %}" width="100%" />
+</div>
+{% endblock content %}

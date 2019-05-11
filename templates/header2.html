@@ -1,0 +1,23 @@
+{% load staticfiles %}
+<div class="container"> 
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="https://asoiaf.huijiwiki.com/wiki/" target="_blank">
+                <img src="{% static '/images/nightking.jpg' %}" width="100px">
+            </a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav" role="navigation">
+                <li><a href="{% url 'home' %}">首页</a></li>
+                <li><a href="{% url 'article:article_titles' %}">文章</a></li>
+                <li><a href="{% url 'image:falls_images' %}">图片墙</a></li>
+                <!--<li><a href="{% url 'course:course_list' %}">课程列表</a></li>-->
+                <li><a href="{% url 'blog:blog_title' %}">家族简介</a></li>
+                <li><a href="{% url 'course:about' %}">关于本站</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/bootstrap.js' %}"></script>

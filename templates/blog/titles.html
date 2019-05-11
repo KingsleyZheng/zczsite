@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}
+家族简介
+{% endblock title %}
+
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+    <h1>Game of Thrones</h1>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-md-8">
+    <ul>
+    {% for blog in blogs %}
+        <li style="font-size:2rem"><a href="{{ blog.id }}">{{ blog.title }}</a></li>
+    {% endfor %}
+    </ul>
+    </div>
+    <div class="col-xs-6 col-md-4">
+    <h2>链接</h2>
+    <p><a href="https://asoiaf.huijiwiki.com/wiki/" target="_blank">冰与火之歌维基</a></p>
+    <img width="200px" src="{% static '/images/logo2.jpg' %}">
+    </div>
+</div>
+{% endblock content %}

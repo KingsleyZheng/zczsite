@@ -1,0 +1,89 @@
+{% extends "article/base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}
+编辑文章
+{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'editor/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'editor/css/editormd.css' %}">
+<div class="container">
+<div class="col-md-10">
+<div style="margin-left:10px;">
+    <form class="form-horizontal" action="." method="post">
+        {% csrf_token %}
+        <div class="row" style="margin-top:10px;">
+            <div class="col-md-2 text-right"><span>标题：</span></div>
+            <div class="col-md-10 text-left">{{this_article_form.title}}</div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+            <div class="col-md-2 text-right"><span>栏目：</span></div>
+            <div class="col-md-10 text-left">
+                <select id="which_column"><!--创建下拉列表-->
+                    {% for column in article_columns  %}
+                    {% if column == this_article_column.column %}
+                    <option value="{{column.id}}" selected="selected">
+                        {{column.column}}
+                    </option>
+                    {% else %}
+                    <option value="{{column.id}}">
+                        {{column.column}}
+                    </option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+            <div class="col-md-2 text-right"><span>内容：</span></div>
+            <div id="editormd" class="col-md-10 text-left">
+                <textarea style="display:none;" id="id_body">{{article.body}}</textarea>
+            </div>
+        </div>
+
+        <div class="row">
+            <input type="button" class="btn btn-primary" value="提交修改" onclick="redit_article()">
+        </div>
+    </form>
+</div>
+</div>
+</div>
+
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/layer.js' %}"></script>
+<script src="{% static 'editor/editormd.min.js' %}"></script><!--mk编辑器-->
+<script>
+    $(function(){
+        var editor = editormd("editormd", {
+            width:"100%",
+            height: 640,
+            //syncScrolling: "single",
+            path:"{% static 'editor/lib/' %}"
+        });
+    });
+</script>
+<script>
+    function redit_article(){
+        var title = $("#id_title").val();
+        var column_id = $("#which_column").val();
+        var body = $("#id_body").val();
+        $.ajax({
+            url:"{% url 'article:redit_article' article.id %}",
+            type: 'POST',
+            data: {"title":title, "body":body, "column_id":column_id},
+            success: function(e){
+                if(e=='1'){
+                    layer.msg('修改成功');
+                    location.href = "{% url 'article:article_list' %}";
+                }else{
+                    layer.msg('修改失败');
+                }
+            },
+        });
+    }
+</script>
+{% endblock content %}

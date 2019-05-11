@@ -1,0 +1,40 @@
+{% extends "article/base.html" %}
+
+{% block title %}
+添加课时
+{% endblock title %}
+
+{% block content %}
+<div style="margin-left:200px;margin-top:10px;">
+    
+    <form enctype="multipart/form-data" action="." method="POST" class="form-horizontal" role="form">
+        {% csrf_token %}    
+        <div class="form-group">
+            <div class="col-md-2 text-left"><span>内容标题：</span></div>
+            <div class="col-md-10 text-left"><span>{{form.title}}</span></div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2 text-left"><span>所属课程：</span></div>
+            <div class="col-md-10 text-left"><span>{{form.course}}</span></div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2 text-left"><span>上传视频：</span></div>
+            <div class="col-md-10 text-left"><span>{{form.video}}</span></div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2 text-left"><span>视频描述：</span></div>
+            <div class="col-md-10 text-left"><span>{{form.description}}</span></div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2 text-left"><span>附件：</span></div>
+            <div class="col-md-10 text-left"><span>{{form.attach}}</span></div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2">
+                <button type="submit" class="btn btn-primary">创建课时</button>
+            </div>
+        </div>
+    </form>
+    
+</div>
+{% endblock content %}
